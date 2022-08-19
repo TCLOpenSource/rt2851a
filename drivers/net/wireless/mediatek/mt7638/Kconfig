@@ -1,0 +1,12 @@
+config MT7638
+       tristate "MediaTek MT7638 support"
+       depends on MAC80211
+       select CFG80211_WEXT
+       select WEXT_CORE
+       ---help---
+         this adds support for MT7668-based wireless module
+
+config MTK_COMBO_WIFI_HIF
+       depends on MT7638
+       string "MediaTek combo wifi HIF"
+       default "usb"

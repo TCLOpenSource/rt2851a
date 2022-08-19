@@ -1,0 +1,148 @@
+
+#ifndef _RTK_PLATFORM_H
+#define _RTK_PLATFORM_H
+
+#include <linux/pageremap.h>
+#include <mach/rtk_mem_layout.h>
+
+extern bool mem_type_2mc;
+
+typedef enum {
+	/* address 512MB before */
+	CARVEDOUT_BOOTCODE = 0,
+	CARVEDOUT_DEMOD,        // device
+	CARVEDOUT_AV_DMEM,
+	CARVEDOUT_VDEC_COMEM,
+#ifdef CONFIG_REALTEK_SECURE
+	CARVEDOUT_K_BOOT,
+	CARVEDOUT_K_OS,
+#endif
+	CARVEDOUT_MAP_RBUS,
+#ifdef CONFIG_REALTEK_SECURE_DDK
+	CARVEDOUT_GPU_FW,
+#endif
+	CARVEDOUT_V_OS,
+#if defined(CONFIG_REALTEK_RPC) ||defined(CONFIG_RTK_KDRV_RPC)
+	CARVEDOUT_MAP_RPC,
+#endif
+	CARVEDOUT_A_OS,
+#ifdef CONFIG_REALTEK_LOGBUF
+	CARVEDOUT_LOGBUF,
+#endif
+	CARVEDOUT_ROMCODE,
+#ifdef CONFIG_PSTORE
+	CARVEDOUT_RAMOOPS,
+#endif
+	CARVEDOUT_IR_TABLE,
+	CARVEDOUT_DDR_BOUNDARY,
+	CARVEDOUT_DDR_BOUNDARY_2,
+
+	/* device */
+	CARVEDOUT_VDEC_RINGBUF, // device
+#ifdef CONFIG_CUSTOMER_TV006
+	CARVEDOUT_GAL,
+#endif
+#ifdef CONFIG_LG_SNAPSHOT_BOOT
+	CARVEDOUT_SNAPSHOT,
+#endif
+	CARVEDOUT_SCALER,
+	CARVEDOUT_SCALER_MEMC,
+	CARVEDOUT_SCALER_MDOMAIN,
+	CARVEDOUT_SCALER_DI_NR,
+	CARVEDOUT_SCALER_NN,
+	CARVEDOUT_SCALER_VIP,
+	CARVEDOUT_SCALER_OD,
+	CARVEDOUT_VDEC_VBM,
+	CARVEDOUT_TP,
+
+	/* for desired cma size calculation */
+	CARVEDOUT_CMA_LOW,
+	CARVEDOUT_CMA_HIGH,
+
+	CARVEDOUT_GPU_RESERVED,
+
+	/* array end number */
+	CARVEDOUT_NUM,
+
+	/* for reserved size in highmem */
+	CARVEDOUT_HIGH_START = CARVEDOUT_SCALER,
+	CARVEDOUT_HIGH_END = CARVEDOUT_TP
+
+} carvedout_buf_t;
+
+typedef enum {
+	CARVEDOUT_NO_FALLBACK = 0,
+	CARVEDOUT_FALLBACK_TO_CMA,
+	CARVEDOUT_FALLBACK_TO_VBM
+} carvedout_fallback_type_t;
+
+typedef enum {
+	MM_LAYOUT_DEFAULT = 0,
+	MM_LAYOUT_1G5,
+	MM_LAYOUT_1GB,
+
+	MM_LAYOUT_CARVEDOUT_NUM
+} mm_layout_index_t;
+
+extern unsigned long carvedout_buf[MM_LAYOUT_CARVEDOUT_NUM][CARVEDOUT_NUM][2];
+
+enum PLAFTORM_TYPE
+{
+	PLATFORM_RTD299OP	= 0, //K2LP
+	PLATFORM_RTD299O	= 1, //K2L
+	PLATFORM_RTD289XP	= 2, //K3LP
+	PLATFORM_RTD289X	= 3, //K3L
+	PLATFORM_RTD289XPP	= 4, //K3LPP
+	PLATFORM_RTD284X	= 5, //S4AP
+	PLATFORM_RTD287X	= 6, //K4L
+	PLATFORM_RTD285X	= 7, //Mac6
+    PLATFORM_RTD287O    = 8, //K5L
+    PLATFORM_RTD285O    = 9, //Mac6P
+    PLATFORM_RTD288O    = 10, //K6L
+    PLATFORM_RTD2851A   = 11,
+    PLATFORM_RTD2875    = 12,
+	PLATFORM_OTHER		= 255
+};
+
+#define PLATFORM_KXLP	PLATFORM_RTD2875
+#define PLATFORM_KXL	PLATFORM_OTHER
+#define PLATFORM_KXLPP	PLATFORM_OTHER
+
+enum PLAFTORM_TYPE get_platform (void);
+
+//==============================================
+enum PLATFORM_MODEL
+{
+	PLATFORM_MODEL_2K = 2,
+	PLATFORM_MODEL_4K = 4,
+	PLATFORM_MODEL_8K = 8,
+	PLATFORM_MODEL_OTHER = 255
+};
+
+#define PLATFORM_MODEL_DEFAULT PLATFORM_MODEL_4K
+
+enum PLATFORM_MODEL get_platform_model(void);
+//==============================================
+
+unsigned long get_uart_clock(void);
+unsigned long get_uart_clock_from_reg_setting(unsigned int uart_no);
+
+unsigned int carvedout_buf_get_layout_idx(void);
+unsigned long carvedout_buf_query(carvedout_buf_t what, void **addr);
+int carvedout_buf_query_is_in_range(unsigned long in_addr, void **start, void **end);
+#ifdef CONFIG_OPTEE_SECURE_SVP_PROTECTION
+unsigned long carvedout_buf_query_secure(carvedout_buf_t what, void **addr);
+#endif
+unsigned long carvedout_buf_query_range(carvedout_buf_t idx_start, carvedout_buf_t idx_end, void **start, void **end);
+unsigned int carvedout_fallback_query(carvedout_buf_t what);
+unsigned int get_irq_num(unsigned int hwirq);
+
+
+#ifdef CONFIG_CMA_MONITOR
+#define MAX_CMA_LIMIT_DEMUX 17*_MB_
+#define MAX_CMA_LIMIT_RTKVDEC 57*_MB_
+#define MAX_CMA_LIMIT_SCALER 10*_MB_
+#endif
+
+#endif //_RTK_PLATFORM_H
+

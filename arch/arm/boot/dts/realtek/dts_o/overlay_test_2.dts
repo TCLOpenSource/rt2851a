@@ -1,0 +1,7 @@
+/dts-v1/;
+/plugin/;
+
+&CHOSEN {
+	bootargs_ext="androidboot.dtbo_idx=1,2,3 loglevel=7 liuwei";
+};
+

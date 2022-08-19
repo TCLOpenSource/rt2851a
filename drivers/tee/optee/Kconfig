@@ -1,0 +1,19 @@
+# OP-TEE Trusted Execution Environment Configuration
+config OPTEE
+	tristate "OP-TEE"
+	depends on HAVE_ARM_SMCCC
+	depends on MMU
+	help
+	  This implements the OP-TEE Trusted Execution Environment (TEE)
+	  driver.
+config OPTEE_SECURE_SVP_PROTECTION
+	tristate "SVP Protection"
+	depends on OPTEE
+	help
+	  Set SVP Protection in OPTEE
+config OPTEE_SUPPORT_VERSION_3_X
+	default n
+	tristate "SUPPORT OPTEE 3.X"
+	depends on OPTEE
+	help
+	  SUPPORT OPTEE VERSION 3.X

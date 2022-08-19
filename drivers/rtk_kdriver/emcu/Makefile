@@ -1,0 +1,1 @@
+obj-$(CONFIG_RTK_KDRV_EMCU) += rtk_kdv_emcu.o
